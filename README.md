@@ -24,8 +24,8 @@
 ### 実行コマンド
 ```bash
 # 動画格納用ディレクトリの作成
-mkdir /app/video/
-### 変換したい動画を /app/video/ に配置する。 ###
+mkdir ./video/
+### 変換したい動画を ./video/ に配置する。 ###
 
 # .envファイルの作成
 echo "ANTHROPIC_API_KEY=sk-ant-XXXXXXXXXXXXXXXX" >> .env
@@ -37,4 +37,7 @@ docker build ./ -t mutite-genarete-app
 docker compose up -d 
 
 ### localhost:8501へブラウザでアクセスする ###
+
+### 動画変換時のPathは、./video/{対象の動画} とする ###
+### 議事録作成時は、ローカルPCからアップロードする ###
 ```
