@@ -1,0 +1,8 @@
+version: '3'
+services:
+  streamlit:
+    image: 'mutite-genarete-app'
+    env_file:
+     - .env
+    ports:          
+      - 8501:8501
