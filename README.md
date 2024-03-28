@@ -23,6 +23,10 @@
 
 ### 実行コマンド
 ```bash
+# 動画格納用ディレクトリの作成
+mkdir /app/video/
+### 変換したい動画を /app/video/ に配置する。 ###
+
 # .envファイルの作成
 echo "ANTHROPIC_API_KEY=sk-ant-XXXXXXXXXXXXXXXX" >> .env
 echo "`cat .env`" # 改行用
