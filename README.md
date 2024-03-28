@@ -35,4 +35,6 @@ echo "AI_MODEL=claude-3-sonnet-20240229" >> .env
 # コンテナのビルドと実行
 docker build ./ -t mutite-genarete-app
 docker compose up -d 
+
+### localhost:8051へブラウザでアクセスする ###
 ```
