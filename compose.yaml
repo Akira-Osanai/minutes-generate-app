@@ -4,5 +4,12 @@ services:
     image: 'mutite-genarete-app'
     env_file:
      - .env
+    volumes:
+      - type: volume
+        source: video
+        target: /app
     ports:          
       - 8501:8501
+
+volumes:
+  video:
