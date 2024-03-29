@@ -1,6 +1,6 @@
 anthropic
 moviepy
-openai-whisper @ git+https://github.com/openai/whisper.git
+faster-whisper
 python-dotenv
 setuptools-rust
 streamlit

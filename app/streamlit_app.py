@@ -1,7 +1,7 @@
 import os
 import io
 from moviepy.editor import VideoFileClip
-import whisper
+from faster_whisper import WhisperModel
 import anthropic
 import streamlit as st
 
@@ -52,12 +52,28 @@ def convert_movie_to_text(video_path):
     video = VideoFileClip(video_path)
     video.audio.write_audiofile(output_audio_path)
 
-    model = whisper.load_model("small")
-    result = model.transcribe(output_audio_path)
-    result["text"] = result["text"].replace(" ", "\n")
+    model_size = "large-v3"
+    model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
-    st.write(result["text"])
-    return result["text"]
+    segments, info = model.transcribe(
+        output_audio_path,
+        language="ja",
+        beam_size=3,
+        best_of=3,
+        temperature=0,
+        vad_filter=True,
+        vad_parameters=dict(min_silence_duration_ms=500),
+    )
+
+    print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
+
+    for segment in segments:
+        print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+
+    segments = list(segments)
+
+    st.write(segments)
+    return segments
 
 def display_chat_messages(messages, ai_model):
     full_response = ""

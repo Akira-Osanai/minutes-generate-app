@@ -6,11 +6,6 @@ COPY ./app /app
 COPY ./requirements.txt /app
 
 RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-    git \
-    ffmpeg; \
-    rm -rf /var/lib/apt/lists/*; \
     pip3 install --upgrade pip; \
     pip3 install -r requirements.txt
 
