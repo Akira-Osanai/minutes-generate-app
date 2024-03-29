@@ -1,5 +1,7 @@
 anthropic
+ez_setup
 moviepy
+av
 faster-whisper
 python-dotenv
 setuptools-rust

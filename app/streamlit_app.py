@@ -63,12 +63,8 @@ def convert_movie_to_text(video_path):
         temperature=0,
         vad_filter=True,
         vad_parameters=dict(min_silence_duration_ms=500),
+        without_timestamps=True,
     )
-
-    print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-
-    for segment in segments:
-        print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
 
     segments = list(segments)
 
