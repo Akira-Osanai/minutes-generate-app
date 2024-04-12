@@ -89,26 +89,46 @@ st.set_page_config(
 
 st.title("議事録作成アプリ")
 
-st.sidebar.markdown("# 処理内容")
-option = st.sidebar.selectbox(
-    "処理の種類を選択してください", ["メモから議事録作成", "動画から文字起こし"]
+st.sidebar.markdown("## AIの選択")
+ai_option = st.sidebar.selectbox(
+    "AIの種類を選択してください", ["ChatGPT", "Claude"]
 )
+video_path = st.sidebar.text_input('API Keyを入力してください。')
+
+if ai_option == "ChatGPT":
+    model_option = st.sidebar.selectbox(
+        "モデルの種類を選択してください", ["claude-3-sonnet-20240229"]
+    )
+
+if ai_option == "Claude":
+    model_option = st.sidebar.selectbox(
+        "モデルの種類を選択してください", ["claude-3-sonnet-20240229"]
+    )
+
+if "ai_model" not in st.session_state:
+    st.session_state["ai_model"] = model_option
+
+if st.session_state["ai_model"] = model_option
+    st.sidebar.markdown("## 処理内容")
+    option = st.sidebar.selectbox(
+        "処理の種類を選択してください", ["メモから議事録作成", "動画から文字起こし"]
+    )
 
 if option == "メモから議事録作成":
-    st.sidebar.markdown("# メモから議事録作成")
+    st.sidebar.markdown("## メモから議事録作成")
     uploaded_file = st.sidebar.file_uploader("テキストファイルをアップロードしてください。", type="txt")
     langage_options = ["English", "Japanese"]
     selected_langage = st.sidebar.radio("select langage", langage_options)
     if st.sidebar.button("Generate"):
-        st.markdown("## メモから議事録作成")
+        st.markdown("### メモから議事録作成")
         with st.spinner("Generating..."):
             convert_text_to_minutes(uploaded_file, selected_langage, settings.ANTHROPIC_API_KEY, st.session_state["ai_model"])
 
 elif option == "動画から文字起こし":
-    st.sidebar.markdown("# 動画から文字起こし")
+    st.sidebar.markdown("## 動画から文字起こし")
     video_path = st.sidebar.text_input('文字起こしをしたい動画のPathを入力してください。')
     if st.sidebar.button("Generate"):
-        st.markdown("## 動画から文字起こし")
+        st.markdown("### 動画から文字起こし")
         with st.spinner("Generating..."):
             convert_movie_to_text(video_path)
 
