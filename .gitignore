@@ -8,6 +8,7 @@ build/tmp-sound/*
 build/whisper-text/*
 *.mov
 *.mp3
+*.txt
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
