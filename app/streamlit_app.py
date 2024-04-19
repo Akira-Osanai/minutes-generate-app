@@ -3,11 +3,12 @@ import io
 from moviepy.editor import VideoFileClip
 import whisper
 import anthropic
+from openai import OpenAI
 import streamlit as st
 
 import settings
 
-def convert_text_to_minutes(uploaded_file, selected_langage, claude_api_key, claude_model):
+def convert_text_to_minutes(uploaded_file, selected_langage, ai_api_key, ai_model):
     whisper_dir = "whisper-text"
     if not os.path.exists(whisper_dir):
         os.makedirs(whisper_dir)
@@ -20,28 +21,40 @@ def convert_text_to_minutes(uploaded_file, selected_langage, claude_api_key, cla
 
     decoded_text = uploaded_file.getvalue().decode("utf-8")
 
-    client = anthropic.Anthropic(api_key=claude_api_key)
-
     minutes_prompt ='Please reply in '\
         + selected_langage +\
         '. Your task is to review the provided meeting notes and create a concise summary that captures the essential information,'\
         'focusing on key takeaways and action items assigned to specific individuals or departments during the meeting.'\
         'Use clear and professional language, and organize the summary in a logical manner using appropriate formatting such as headings, subheadings, and bullet points.'\
         "Ensure that the summary is easy to understand and provides a comprehensive but succinct overview of the meeting's content,"\
-        "with a particular focus on clearly indicating who is responsible for each action item."
+            "with a particular focus on clearly indicating who is responsible for each action item."
 
-    message = client.messages.create(
-        model=claude_model,
-        max_tokens=4000,
-        temperature=0.5,
-        system=minutes_prompt,
-        messages=[{"role": "user", "content": [{"type": "text", "text": "Meeting notes:" + decoded_text}]}]
-    )
-    
-    generated_content = message.content[0].text
-    st.write(generated_content)
-    with open(minutes_file_path, "w") as f:
-        f.write(generated_content)
+    if ai_option == "ChatGPT":
+        client = OpenAI(api_key=ai_api_key)
+        completion = client.chat.completions.create(
+            model=ai_model,
+            messages=[
+                {"role": "system", "content": minutes_prompt},
+                {"role": "user", "content": "Meeting notes:" + decoded_text}
+            ]
+        )
+        generated_content = str(completion.choices[0].message.content)
+        st.write(generated_content)
+        with open(minutes_file_path, "w") as f:
+            f.write(generated_content)
+    elif ai_option == "Claude":
+        client = anthropic.Anthropic(api_key=ai_api_key)
+        message = client.messages.create(
+            model=ai_model,
+            max_tokens=4000,
+            temperature=0.5,
+            system=minutes_prompt,
+            messages=[{"role": "user", "content": [{"type": "text", "text": "Meeting notes:" + decoded_text}]}]
+        )
+        generated_content = message.content[0].text
+        st.write(generated_content)
+        with open(minutes_file_path, "w") as f:
+            f.write(generated_content)
 
 def convert_movie_to_text(video_path):
     audio_dir = "tmp-sound"
@@ -93,22 +106,20 @@ st.sidebar.markdown("## AIの選択")
 ai_option = st.sidebar.selectbox(
     "AIの種類を選択してください", ["ChatGPT", "Claude"]
 )
-video_path = st.sidebar.text_input('API Keyを入力してください。')
+st.session_state["api_key"] = st.sidebar.text_input('API Keyを入力してください。', type="password")
+model_option = st.sidebar.text_input('モデルの種類を入力してください。')
 
 if ai_option == "ChatGPT":
-    model_option = st.sidebar.selectbox(
-        "モデルの種類を選択してください", ["gpt-3.5-turbo-0125"]
-    )
+    url = "https://platform.openai.com/docs/models/models"
+    st.sidebar.markdown("[ChatGPT AI Models List](%s)" % url)
 
 if ai_option == "Claude":
-    model_option = st.sidebar.selectbox(
-        "モデルの種類を選択してください", ["claude-3-sonnet-20240229"]
-    )
+    url = "https://docs.anthropic.com/claude/docs/models-overview"
+    st.sidebar.markdown("[Claude AI Models List](%s)" % url)
+    
+st.session_state["ai_model"] = model_option
 
-if "ai_model" not in st.session_state:
-    st.session_state["ai_model"] = model_option
-
-if st.session_state["ai_model"] = model_option
+if st.session_state["ai_model"] == model_option:
     st.sidebar.markdown("## 処理内容")
     option = st.sidebar.selectbox(
         "処理の種類を選択してください", ["メモから議事録作成", "動画から文字起こし"]
@@ -122,7 +133,7 @@ if option == "メモから議事録作成":
     if st.sidebar.button("Generate"):
         st.markdown("### メモから議事録作成")
         with st.spinner("Generating..."):
-            convert_text_to_minutes(uploaded_file, selected_langage, settings.ANTHROPIC_API_KEY, st.session_state["ai_model"])
+            convert_text_to_minutes(uploaded_file, selected_langage, st.session_state["api_key"], st.session_state["ai_model"])
 
 elif option == "動画から文字起こし":
     st.sidebar.markdown("## 動画から文字起こし")
