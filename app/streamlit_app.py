@@ -97,7 +97,7 @@ video_path = st.sidebar.text_input('API Keyを入力してください。')
 
 if ai_option == "ChatGPT":
     model_option = st.sidebar.selectbox(
-        "モデルの種類を選択してください", ["claude-3-sonnet-20240229"]
+        "モデルの種類を選択してください", ["gpt-3.5-turbo-0125"]
     )
 
 if ai_option == "Claude":
