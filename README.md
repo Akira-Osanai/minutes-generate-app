@@ -40,4 +40,7 @@ docker compose up -d
 
 ### 動画変換時のPathは、./video/{対象の動画} とする ###
 ### 議事録作成時は、ローカルPCからアップロードする ###
+
+source venv/bin/activate
+streamlit run "./app/streamlit_app.py" --server.port=8501
 ```
