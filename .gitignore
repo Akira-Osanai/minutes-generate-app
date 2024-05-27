@@ -2,13 +2,14 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 ### App ###
-build/minutes-text/*
-build/movie/*
-build/tmp-sound/*
-build/whisper-text/*
+minutes-text/*
+tmp-sound/*
+tmp-text/*
+tmp-video/*
+video/*
+*.mp4
 *.mov
 *.mp3
-*.txt
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
